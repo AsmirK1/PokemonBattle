@@ -1,36 +1,45 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# PokemonBattle
 
-## Getting Started
+| ID    | Functional Requirement       | Description                                                                                                                   | Status      |
+| ----- | ---------------------------- | ----------------------------------------------------------------------------------------------------------------------------- | ----------- |
+| FR001 | Group Project                | Develop the application collaboratively; share tasks evenly.                                                                  | In Progress |
+| FR002 | Follow Group-Work Guidelines | Comply with bootcamp best-practices for teamwork.                                                                             | In Progress |
+| FR003 | Single Public Repo           | Keep one repository that contains both client and server code (full-stack). Instructors should not be added as collaborators. |
+| FR004 | PR-Based Workflow            | Merge all changes into main through reviewed Pull Requests.                                                                   | In Progress |
 
-First, run the development server:
+App Framework & Runtime
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+| ID    | Functional Requirement | Description                                                                                                                               | Status      |
+| ----- | ---------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
+| FR005 | Framework Choice       | Implement the stack with either:• Next .js using React Server Components (RSC) or React Router in Framework Mode (data loaders & actions) | In Progress |
+| FR006 | TypeScript Everywhere  | Configure TypeScript for both browser and server code.                                                                                    | In Progress |
+| FR007 | Environment Variables  | Manage secrets (DB string, PokeAPI base URL, etc.) via .env and framework-specific env helpers.                                           | In Progress |
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Database & Data Layer
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| ID    | Functional Requirement | Description                                                                                           | Status      |
+| ----- | ---------------------- | ----------------------------------------------------------------------------------------------------- | ----------- |
+| FR008 | Cloud DB               | Provisioning Spin up a PostgreSQL (Neon) In Progress                                                  |
+| FR009 | Leaderboard Model      | Create a leaderboard schema with: id/\_id, username (NOT NULL), score (NOT NULL), date (default Now). | In Progress |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Data fetching and Mutations
 
-## Learn More
+| ID    | Functional Requirement | Description                                                                   | Status      |
+| ----- | ---------------------- | ----------------------------------------------------------------------------- | ----------- |
+| FR011 | Retrieve leaderboard   | Return all scores ordered by highest first.                                   | In Progress |
+| FR012 | Add to leaderboard     | Accept { username, score }, validate, write to DB, and return the new record. | In Progress |
 
-To learn more about Next.js, take a look at the following resources:
+(In Next.js, implement this using RSC and Server Actions; in React Router framework mode, use Loaders and Actions)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Front-End Features (Shared Regardless of Framework)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+| ID    | Functional Requirement   | Description                                                                                                                      | Status      |
+| ----- | ------------------------ | -------------------------------------------------------------------------------------------------------------------------------- | ----------- |
+| FR014 | Route Map                | Implement navigation for:Home, Pokémon Details, My Roster, Battle, Leaderboard. Use the selected framework’s routing primitives. | In Progress |
+| FR015 | Home Page – Pokémon List | Fetch Pokémon from PokeAPI, list them as cards; each card links to /pokemon/:id.                                                 | In Progress |
+| FR016 | Pokémon Details Page     | Show stats, types, abilities; include “Add to Roster”.                                                                           | In Progress |
+| FR017 | My Roster Page           | Display chosen Pokémon; allow removals; persist roster (localStorage or DB).                                                     | In Progress |
+| FR018 | Battle Page              | Let users battle a random Pokémon using simple type/stat logic; track wins, losses, XP.                                          | In Progress |
+| FR019 | Leaderboard Page         | Fetch scores (leaderboard); after a battle, prompt for name and post new score (leaderboard).                                    | In Progress |
+| FR020 | Form Validation          | Validate all user inputs with Zod (e.g., username, roster changes) before submission.                                            | In Progress |
+| FR021 | Responsive Styling       | Style with Tailwind CSS and ensure usability on mobile & desktop.                                                                | In Progress |
