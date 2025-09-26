@@ -4,7 +4,7 @@ import PokemonCard from "./PokemonCard";
 // reuse in Pokedex, roaster(?), as loading Page (with placeholders)
 const PokemonList = () => {
 	// Placeholder for Data
-	myPokemon = ["Charmander", "Bisasam", "Mew"];
+	const myPokemon = ["Charmander", "Bisasam", "Mew"];
 	return (
 		<section>
 			<h1>Pokemon List</h1>
