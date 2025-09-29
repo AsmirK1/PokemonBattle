@@ -1,12 +1,12 @@
 import PokemonList from "@/components/PokemonList.js";
 
-const Pokedex = () => {
+const MyRoaster = () => {
 	return (
 		<section>
-			<h1>Pokedex</h1>
+			<h1>My Roaster</h1>
 			<PokemonList />
 		</section>
 	);
 };
 
-export default Pokedex;
+export default MyRoaster;
