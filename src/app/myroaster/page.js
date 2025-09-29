@@ -1,10 +1,10 @@
-import PokemonList from "@/components/PokemonList.js";
+import { PokemonGrid } from "@/components/PokemonGrid.tsx";
 
 const MyRoaster = () => {
 	return (
 		<section>
 			<h1>My Roaster</h1>
-			<PokemonList />
+			<PokemonGrid />
 		</section>
 	);
 };
