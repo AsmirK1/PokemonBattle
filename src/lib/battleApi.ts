@@ -55,13 +55,3 @@ export async function getPopularPokemons(): Promise<PokemonSelection[]> {
     types: pokemon.types.map(t => t.type.name)
   }));
 }
-
-export async function getPokemonSelection(id: number): Promise<PokemonSelection> {
-  const pokemon = await getPokemonWithMoves(id);
-  return {
-    id: pokemon.id,
-    name: pokemon.name,
-    image: pokemon.sprites.other['official-artwork'].front_default,
-    types: pokemon.types.map(t => t.type.name)
-  };
-}
