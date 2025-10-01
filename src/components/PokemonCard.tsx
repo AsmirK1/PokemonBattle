@@ -1,15 +1,22 @@
+import { useState } from 'react';
 import Link from 'next/link';
 import { Pokemon } from '@/lib/types';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface PokemonCardProps {
   pokemon: Pokemon;
 }
 
 export default function PokemonCard({ pokemon }: PokemonCardProps) {
+  const [buttonText, setButtonText] = useState('Add to Stack');
+  const [isAdded, setIsAdded] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const { isAuthenticated, user } = useAuth();
+  
   const imageUrl = pokemon.sprites.other['official-artwork'].front_default;
   const primaryType = pokemon.types[0]?.type.name || 'normal';
 
-  // Boje za svaki tip (bez promjene)
+  // Colors for different Pokemon types
   const typeColors: Record<string, string> = {
     normal: 'bg-gray-400',
     fire: 'bg-red-500',
@@ -31,17 +38,71 @@ export default function PokemonCard({ pokemon }: PokemonCardProps) {
     fairy: 'bg-pink-300',
   };
 
+  const handleAddToStack = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    if (!isAuthenticated) {
+      console.log('User must be logged in to add to stack');
+      return;
+    }
+
+    setIsLoading(true);
+    console.log(`Adding ${pokemon.name} to stack`);
+
+    try {
+      // Send request to your API to add pokemon to user's stack
+      const response = await fetch('/api/stack/add', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId: user.id,
+          pokemonId: pokemon.id,
+          pokemonName: pokemon.name,
+          pokemonData: pokemon // Send the complete pokemon data
+        }),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        // Change button state to "Added"
+        setButtonText('Added!');
+        setIsAdded(true);
+
+        // revert back to "Add to Stack" after 2 seconds
+        setTimeout(() => {
+          setButtonText('Add to Stack');
+          setIsAdded(false);
+        }, 2000);
+      } else {
+        console.error('Failed to add to stack:', result.error);
+        setButtonText('Error!');
+        setTimeout(() => setButtonText('Add to Stack'), 2000);
+      }
+    } catch (error) {
+      console.error('Error adding to stack:', error);
+      setButtonText('Error!');
+      setTimeout(() => setButtonText('Add to Stack'), 2000);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
-    <Link href={`/pokemon/${pokemon.id}`}>
-      <div className="group relative bg-accent rounded-2xl shadow-lg overflow-hidden transform transition-all duration-300 hover:scale-105 hover:shadow-2xl cursor-pointer animate-fade-in">
-        {/* Background gradient based on type */}
+    <Link href={`/pokemon/${pokemon.id}`} className="block">
+      <div className="group relative bg-accent rounded-2xl shadow-lg overflow-hidden transform transition-all duration-300 hover:scale-105 hover:shadow-2xl animate-fade-in">
+        {/* Background gradient */}
         <div className={`absolute inset-0 bg-gradient-to-br ${typeColors[primaryType]} opacity-20`}></div>
         
         <div className="relative p-6">
           {/* Pokemon ID */}
           <div className="absolute top-4 right-4 bg-white/80 backdrop-blur-sm rounded-full px-3 py-1">
-            {/* PROMJENA 1: text-text -> text-[#333333] */}
-            <span className="text-sm font-bold text-[#333333]">#{pokemon.id.toString().padStart(3, '0')}</span>
+            <span className="text-sm font-bold text-[#333333]">
+              #{pokemon.id.toString().padStart(3, '0')}
+            </span>
           </div>
           
           {/* Pokemon Image */}
@@ -57,7 +118,6 @@ export default function PokemonCard({ pokemon }: PokemonCardProps) {
           </div>
           
           {/* Pokemon Name */}
-          {/* PROMJENA 2: text-text -> text-[#333333] */}
           <h3 className="text-xl font-bold text-center capitalize mb-2 text-[#333333]">
             {pokemon.name}
           </h3>
@@ -74,15 +134,45 @@ export default function PokemonCard({ pokemon }: PokemonCardProps) {
             ))}
           </div>
 
+          {/* Add to Stack Button - Only show if user is authenticated */}
+          {isAuthenticated && (
+            <div className="mt-4 flex justify-center">
+              <button
+                onClick={handleAddToStack}
+                disabled={isLoading || isAdded}
+                className={`
+                  cursor-pointer  
+                  relative z-5
+                  px-3 py-1.5 text-xs
+                  sm:px-4 sm:py-2 sm:text-sm
+                  md:px-5 md:py-2.5 md:text-base
+                  rounded-lg font-semibold 
+                  w-full sm:w-auto
+                  transition-all duration-300
+                  shadow-md
+                  ${
+                    isAdded 
+                      ? 'bg-green-500 hover:bg-green-600 shadow-[0_0_15px_rgba(34,197,94,0.7)]' 
+                      : 'bg-blue-500 hover:bg-blue-600 shadow-[0_0_15px_rgba(59,130,246,0.7)]'
+                  }
+                  hover:shadow-lg
+                  active:scale-95
+                  disabled:opacity-50 disabled:cursor-not-allowed
+                `}
+              >
+                {isLoading ? 'Adding...' : buttonText}
+              </button>
+            </div>
+          )}
+
           {/* Stats */}
-          {/* PROMJENA 3: text-text/80 -> text-[#333333]/80 */}
           <div className="mt-4 flex justify-between text-xs text-[#333333]/80">
             <span>Height: {pokemon.height / 10}m</span>
             <span>Weight: {pokemon.weight / 10}kg</span>
           </div>
         </div>
         
-        {/* Hover effect overlay */}
+        {/* Hover overlay */}
         <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
       </div>
     </Link>

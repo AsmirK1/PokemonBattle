@@ -13,16 +13,17 @@ export const BattleMoveSchema = z.object({
 
 export type BattleMove = z.infer<typeof BattleMoveSchema>;
 
+// Ažuriraj schema da bude fleksibilnija sa slikama
 export const PokemonWithMovesSchema = z.object({
   id: z.number(),
   name: z.string(),
   sprites: z.object({
-    front_default: z.string().url().nullable(),
+    front_default: z.string().url().nullable().or(z.string().nullable()),
     other: z.object({
       'official-artwork': z.object({
-        front_default: z.string().url(),
-      }),
-    }),
+        front_default: z.string().url().nullable().or(z.string().nullable()),
+      }).optional(), // Dodaj .optional() ako ne postoji uvijek
+    }).optional(), // Dodaj .optional() ako other ne postoji uvijek
   }),
   types: z.array(z.object({
     type: z.object({
