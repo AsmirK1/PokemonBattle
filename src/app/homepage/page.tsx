@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { getMultiplePokemons } from '@/lib/api';
 import { Pokemon } from '@/lib/types';
-import PokemonGrid from '@/app/homepage/components/PokemonGrid';
+import PokemonGrid from '@/components/PokemonGrid';
 import LoadingSpinner from '@/components/LoadingSpinner';
 
 export default function Homepage() {

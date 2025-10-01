@@ -35,7 +35,7 @@ export default function Footer({ variant = "light" }: Props) {
   const year = new Date().getFullYear();
 
   return (
-    <footer className={`mt-16 border-t ${shell}`}>
+    <footer className={`border-t ${shell}`}>
       <div className="mx-auto max-w-6xl px-4 py-8">
         <nav className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm">
           <Link href="/homepage" className={link}>Home</Link>
