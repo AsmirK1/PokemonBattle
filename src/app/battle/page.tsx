@@ -3,7 +3,7 @@ import BattleArena from './components/BattleArena';
 import { PokemonWithMoves } from '@/lib/battleTypes';
 
 export default async function BattlePage() {
-  // Uvijek random protivnički Pokemon
+  // Random enemy Pokemon
   const enemyPokemon = await getRandomPokemon();
   const popularPokemons = await getPopularPokemons();
 
