@@ -1,7 +1,9 @@
-import { neon } from "@neondatabase/serverless";
+// lib/db.ts
+import { Pool } from "pg";
 
-if (!process.env.DATABASE_URL) {
-    throw new Error("Database Url is missing. Add it to .env.local")
-}
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+});
 
-export const sql = neon(process.env.DATABASE_URL!)
+export default pool;
