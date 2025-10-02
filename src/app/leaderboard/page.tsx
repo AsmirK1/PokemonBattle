@@ -1,3 +1,5 @@
+import { sql } from "@/lib/db";
+
 type Row = {
     username: string;
     score: number;
@@ -6,9 +8,12 @@ type Row = {
 }
 
 async function getLeaderboard(): Promise<Row[]> {
-    // const rows = await db.select().from(leaderboard).orderBy(desc(leaderboard.score));
-    // return rows;
-    return [];
+    const rows = await sql<Row>`
+    SELECT username, score, date
+    FROM leaderboard
+    ORDER BY score DESC, date DESC
+    LIMIT 10000`
+    return rows;
 }
 
 function Medal({rank}:{rank: number}) {

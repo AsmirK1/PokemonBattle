@@ -9,6 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@neondatabase/serverless": "^1.0.2",
     "next": "15.5.4",
     "react": "19.1.0",
     "react-dom": "19.1.0",
@@ -21,9 +22,9 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "autoprefixer": "10.4.16",
-    "postcss": "8.4.31",
     "eslint": "^9",
     "eslint-config-next": "15.5.4",
+    "postcss": "8.4.31",
     "tailwindcss": "^4",
     "typescript": "^5"
   }
