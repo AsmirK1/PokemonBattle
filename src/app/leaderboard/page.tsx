@@ -1,4 +1,4 @@
-import { sql } from "@/lib/db";
+import pool from "@/lib/db";
 
 type Row = {
     username: string;
@@ -8,18 +8,19 @@ type Row = {
 }
 
 async function getLeaderboard(): Promise<Row[]> {
-    const rows = await sql<Row>`
+    const result = await pool.query<Row>(`
     SELECT username, score, date
     FROM leaderboard
     ORDER BY score DESC, date DESC
     LIMIT 10000`
-    return rows;
+    )
+    return result.rows;
 }
 
 function Medal({rank}:{rank: number}) {
     if (rank === 1) return <span title="1st" className="text-2xl">🥇</span>
     if (rank === 2) return <span title="2nd" className="text-2xl">🥈</span>
-    if (rank === 2) return <span title="3rd" className="text-2xl">🥉</span>
+    if (rank === 3) return <span title="3rd" className="text-2xl">🥉</span>
     return (
         <span className="inline-flex h-7 min-w-7 items-center justify-center rounded-full border bg-white px-2 text-xs font-medium text-gray-700">
             {rank}
