@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { PokemonWithMoves, BattleLogEntry, BattleStats, BattleState, PokemonSelection } from '@/lib/battleTypes';
 import { BattleEngine } from '@/lib/battleLogic';
 import BattlePokemonCard from './BattlePokemonCard';
@@ -8,6 +8,9 @@ import BattleControls from './BattleControls';
 import BattleLog from './BattleLog';
 import BattleAnimations from './BattleAnimations';
 import PokemonSelectionPopup from './PokemonSelectionPopup';
+import { submitLeaderboardScore } from "@/lib/battleApi";
+import { useAuth } from "@/contexts/AuthContext"; 
+
 
 interface BattleArenaProps {
   enemyPokemon: PokemonWithMoves;
@@ -27,6 +30,43 @@ export default function BattleArena({ enemyPokemon, popularPokemons }: BattleAre
   const [isEnemyTakingDamage, setIsEnemyTakingDamage] = useState(false);
   const [showSelectionPopup, setShowSelectionPopup] = useState(false);
   const [showResultScreen, setShowResultScreen] = useState(false);
+
+const auth = (useAuth as any)?.(); 
+const postedRef = useRef(false);
+
+  // simple scoring: win=100, draw=50, lose=0
+function computeScore(result: BattleState): number {
+  if (result === "player-win") return 100;
+  if (result === "draw") return 50;
+  return 0; // enemy-win
+}
+
+// If not logged in, prompt once and write to leaderboard
+async function handlePostBattlePrompt(result: BattleState) {
+  try {
+    // if you don't use auth, remove the next 2 lines:
+    if (auth?.user?.id) return; // logged-in: server-side logging already covers it
+    if (postedRef.current) return;
+    postedRef.current = true;
+
+    const username = (prompt("Enter your trainer name for the leaderboard:") || "").trim();
+    if (!username) {
+      postedRef.current = false; // allow retry next time
+      return;
+    }
+
+    const score = computeScore(result);
+    await submitLeaderboardScore(username, score);
+    // optional: navigate user to see their score
+    window.location.href = "/leaderboard";
+  } catch (e) {
+    console.error(e);
+    postedRef.current = false; // allow retry on failure
+    alert("Could not add your score to the leaderboard. Please try again.");
+  }
+}
+
+  
 
   // Initialize battle when player selects Pokemon
   const initializeBattle = (selectedPokemon: PokemonWithMoves) => {
@@ -54,14 +94,14 @@ export default function BattleArena({ enemyPokemon, popularPokemons }: BattleAre
 
     setIsAttacking(true);
     setBattleState('fighting');
-
+    
     await new Promise(resolve => setTimeout(resolve, 500));
     const { logs: attackLogs } = await battleEngine.playerAttack(moveIndex);
     
     setBattleLogs(prev => [...prev, ...attackLogs]);
     setBattleStats(battleEngine.getBattleStats());
     setIsEnemyTakingDamage(true);
-
+    
     const battleResult = battleEngine.checkBattleOver();
     if (battleResult) {
       await new Promise(resolve => setTimeout(resolve, 1000));
@@ -70,12 +110,13 @@ export default function BattleArena({ enemyPokemon, popularPokemons }: BattleAre
       setBattleLogs(prev => [...prev, {
         turn: battleStats?.turn || 1,
         message: battleResult === 'player-win' 
-          ? `🎉 ${playerPokemon!.name} won the battle!` 
-          : battleResult === 'enemy-win'
-          ? `💥 ${currentEnemyPokemon.name} won the battle!`
-          : "🤝 It's a draw!",
+        ? `🎉 ${playerPokemon!.name} won the battle!` 
+        : battleResult === 'enemy-win'
+        ? `💥 ${currentEnemyPokemon.name} won the battle!`
+        : "🤝 It's a draw!",
         type: 'win'
       }]);
+      await handlePostBattlePrompt(battleResult)
       return;
     }
 
@@ -108,6 +149,7 @@ export default function BattleArena({ enemyPokemon, popularPokemons }: BattleAre
           : "🤝 It's a draw!",
         type: 'win'
       }]);
+      await handlePostBattlePrompt(enemyBattleResult);
       return;
     }
 
@@ -125,6 +167,8 @@ export default function BattleArena({ enemyPokemon, popularPokemons }: BattleAre
     setBattleStats(null);
     setBattleLogs([]);
     setShowResultScreen(false);
+    postedRef.current = false;
+
     
     // Reset animation states
     setIsAttacking(false);

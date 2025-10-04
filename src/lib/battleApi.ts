@@ -55,3 +55,20 @@ export async function getPopularPokemons(): Promise<PokemonSelection[]> {
     types: pokemon.types.map(t => t.type.name)
   }));
 }
+
+export async function submitLeaderboardScore(username: string, score: number, ) {
+  if (!username || !username.trim()) throw new Error('Username required');
+  if (!Number.isFinite(score) || score < 0 ) throw new Error('Score must be a non-negative number');
+
+  const res = await fetch("/api/leaderboard", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({username: username.trim(), score}),
+  });
+
+  if (!res.ok) {
+    const data = await res.json().catch(() => ({}));
+    throw new Error(data?.error ? JSON.stringify(data.error) : "Failed to add score" );
+  }
+  return res.json();
+}

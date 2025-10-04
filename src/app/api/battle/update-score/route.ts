@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import pool from '@/lib/db';
+import { addScore } from "@/lib/leaderboard";
+
 
 export async function POST(request: NextRequest) {
   const client = await pool.connect();
@@ -35,6 +37,13 @@ export async function POST(request: NextRequest) {
     }
 
     const updatedUser = updateResult.rows[0];
+
+   try {
+      await addScore({ username: updatedUser.name, score: updatedUser.userscore });
+    } catch (e) {
+      console.error("Non-fatal: failed to append leaderboard row", e);
+    }
+
 
     return NextResponse.json({
       success: true,
