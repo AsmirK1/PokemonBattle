@@ -80,8 +80,10 @@ export default async function LeaderboardPage() {
                     <div className="truncate font-medium text-gray-900">
                       {row.username}
                     </div>
+                    <div className="text-xs text-gray-500">{row.date}</div>
                   </div>
                 </div>
+
 
                 {/* Score pill (right-aligned) */}
                 <div className="col-span-4 sm:col-span-4 flex justify-end">
