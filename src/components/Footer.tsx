@@ -2,6 +2,7 @@ import Link from "next/link";
 
 type Props = {
   variant?: "light" | "dark";
+  accent?: "blue" | "indigo" | "sky"; // pick the blue you use elsewhere
 };
 
 const GitHubIcon = () => (
@@ -16,11 +17,22 @@ const LinkedInIcon = () => (
   </svg>
 );
 
-export default function Footer({ variant = "light" }: Props) {
+export default function Footer({ variant = "light", accent = "indigo" }: Props) {
+  // choose a single accent that matches your pages
+  const accentText =
+    accent === "blue" ? "text-blue-600 hover:text-blue-700" :
+    accent === "sky"  ? "text-sky-600 hover:text-sky-700"  :
+                        "text-indigo-600 hover:text-indigo-700";
+
+  const accentBg =
+    accent === "blue" ? "from-blue-500/70 to-blue-400/70" :
+    accent === "sky"  ? "from-sky-500/70 to-sky-400/70"   :
+                        "from-indigo-500/70 to-indigo-400/70";
+
   const shell =
     variant === "dark"
-      ? "bg-neutral-900/90 text-neutral-300 border-neutral-800"
-      : "bg-white text-neutral-600 border-neutral-200";
+      ? "bg-neutral-950 text-neutral-300 border-neutral-800"
+      : "bg-gray-400 from-slate-50 to-slate-100 text-neutral-700";
 
   const link =
     variant === "dark"
@@ -29,29 +41,62 @@ export default function Footer({ variant = "light" }: Props) {
 
   const iconBtn =
     variant === "dark"
-      ? "bg-neutral-800 border-neutral-700 text-neutral-100 hover:bg-neutral-700"
+      ? "bg-neutral-900 border-neutral-700 text-neutral-100 hover:bg-neutral-800"
       : "bg-neutral-100 border-neutral-200 text-neutral-700 hover:bg-neutral-200";
 
   const year = new Date().getFullYear();
 
   return (
-    <footer className={`border-t ${shell}`}>
-      <div className="mx-auto max-w-6xl px-4 py-8">
-        <nav className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm">
-          <Link href="/homepage" className={link}>Home</Link>
-          <Link href="/pokemon" className={link}>Pokémon</Link>
-          <Link href="/roster" className={link}>My Roster</Link>
-          <Link href="/battle" className={link}>Battle</Link>
-          <Link href="/leaderboard" className={link}>Leaderboard</Link>
+    <footer className={`relative border-t ${shell}`}>
+      {/* thin accent line */}
+      <div className={`pointer-events-none absolute inset-0
+               bg-[radial-gradient(1200px_400px_at_50%_-200px,theme(colors.blue.50),transparent)] ${accentBg}`}
+               aria-hidden />
+
+      <div className="relative mx-auto max-w-6xl px-4 py-8">
+        {/* brand row */}
+        <div className="flex items-center justify-center gap-3">
+          <Link
+            href="/homepage"
+            className={`font-semibold tracking-tight ${accentText}`}
+            aria-label="Go to homepage"
+          >
+            PokeBattle
+          </Link>
+
+          {/* little separator dot */}
+          <span className="h-1 w-1 rounded-full bg-neutral-300" aria-hidden />
+          <span className="text-xs text-neutral-500">by Team PokémonBattle</span>
+        </div>
+
+        {/* nav */}
+        <nav className="mt-4 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm">
+          <Link href="/homepage" className={`${link} underline-offset-4 hover:underline`}>
+            Home
+          </Link>
+          {/* <Link href="/pokemon" className={`${link} underline-offset-4 hover:underline`}>
+            Pokémon
+          </Link> */}
+          <Link href="/roster" className={`${link} underline-offset-4 hover:underline`}>
+            My Roster
+          </Link>
+          <Link href="/battle" className={`${link} underline-offset-4 hover:underline`}>
+            Battle
+          </Link>
+          <Link href="/leaderboard" className={`${link} underline-offset-4 hover:underline`}>
+            Leaderboard
+          </Link>
         </nav>
 
-        <div className="mt-4 flex justify-center gap-3">
+        {/* socials */}
+        <div className="mt-5 flex justify-center gap-3">
           <a
             href="https://github.com/AsmirK1/PokemonBattle"
             target="_blank"
             rel="noreferrer"
             aria-label="GitHub"
-            className={`h-10 w-10 sm:h-9 sm:w-9 rounded-full border flex items-center justify-center transition-colors ${iconBtn}`}
+            className={`group h-10 w-10 sm:h-9 sm:w-9 rounded-full border flex items-center justify-center transition-colors ${iconBtn}`}
+            title="GitHub"
           >
             <GitHubIcon />
           </a>
@@ -60,24 +105,26 @@ export default function Footer({ variant = "light" }: Props) {
             target="_blank"
             rel="noreferrer"
             aria-label="LinkedIn"
-            className={`h-10 w-10 sm:h-9 sm:w-9 rounded-full border flex items-center justify-center transition-colors ${iconBtn}`}
+            className={`group h-10 w-10 sm:h-9 sm:w-9 rounded-full border flex items-center justify-center transition-colors ${iconBtn}`}
+            title="LinkedIn"
           >
             <LinkedInIcon />
           </a>
         </div>
 
+        {/* legal */}
         <div className="mt-5 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs">
-          <Link href="/privacy" className={link}>Privacy</Link>
-          <Link href="/terms" className={link}>Terms</Link>
-          <a href="mailto:team@example.com" className={link}>Contact</a>
-          <a href="https://pokeapi.co/" target="_blank" rel="noreferrer" className={link}>
+          <Link href="/privacy" className={`${link} hover:underline underline-offset-4`}>Privacy</Link>
+          <Link href="/terms" className={`${link} hover:underline underline-offset-4`}>Terms</Link>
+          <a href="mailto:team@example.com" className={`${link} hover:underline underline-offset-4`}>Contact</a>
+          <a href="https://pokeapi.co/" target="_blank" rel="noreferrer" className={`${link} hover:underline underline-offset-4`}>
             Powered by PokeAPI
           </a>
         </div>
 
-        {/* Copyright */}
-        <p className="mt-4 text-center text-xs opacity-80">
-          &copy; {year} PokémonBattle — All rights reserved.
+        {/* copyright */}
+        <p className="mt-4 text-center text-xs text-neutral-500">
+          © {year} PokémonBattle — All rights reserved.
         </p>
       </div>
     </footer>

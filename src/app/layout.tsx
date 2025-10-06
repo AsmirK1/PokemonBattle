@@ -32,9 +32,10 @@ export default function RootLayout({
         <AuthProvider>
           <Navbar />
           <main>{children}</main>
-          <Footer />
+          
         </AuthProvider>
       </body>
+      <Footer accent="indigo"/>
     </html>
   );
 }
