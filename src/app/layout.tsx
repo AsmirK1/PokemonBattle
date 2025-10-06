@@ -28,7 +28,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <html lang="en">
       <body>
         <AuthProvider>
           <Navbar />
@@ -37,7 +36,6 @@ export default function RootLayout({
         </AuthProvider>
       </body>
       <Footer accent="indigo"/>
-    </html>
     </html>
   );
 }
