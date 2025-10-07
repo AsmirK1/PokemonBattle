@@ -24,3 +24,36 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Leaderboard responsive tweaks */
+.leaderboard { padding-inline: 0.75rem; }
+
+/* phones */
+@media (max-width: 640px) {
+  .lb-item {
+    display: flex;              /* override grid on tiny screens */
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.625rem 0.5rem;
+  }
+
+  /* hide avatar circle on tiny screens */
+  .lb-item .h-9.w-9 { display: none; }
+
+  /* let name/date shrink nicely */
+  .lb-item .min-w-0 { flex: 1 1 auto; }
+  .lb-item .truncate { font-size: 0.95rem; }
+  .lb-item .text-xs { font-size: 0.72rem; }
+
+  /* keep medal tight */
+  .lb-item > .col-span-2,
+  .lb-item > .sm\:col-span-1 { flex: 0 0 auto; }
+
+  /* pin score chip to the right */
+  .lb-score { margin-left: auto; }
+}
+
+/* tablets */
+@media (min-width: 641px) and (max-width: 1024px) {
+  .lb-item { grid-template-columns: 1fr 6fr 2fr; }
+}
