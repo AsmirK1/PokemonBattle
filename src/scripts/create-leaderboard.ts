@@ -58,7 +58,23 @@ async function main() {
             CREATE INDEX IF NOT EXISTS idx_leaderboard_score_created
             On leaderboard (score DESC, created_at DESC NULLS LAST);
             `)
-        console.log("✅ leaderboard table ready");;
+            console.log("✅ leaderboard table ready");;
+        
+        // Ensure username is unique (so we can upsert by username)
+        await pool.query(`
+        DO $$
+        BEGIN
+        IF NOT EXISTS (
+            SELECT 1 FROM pg_constraint
+            WHERE conname = 'leaderboard_username_key'
+        ) THEN
+            ALTER TABLE leaderboard
+            ADD CONSTRAINT leaderboard_username_key UNIQUE (username);
+        END IF;
+        END
+        $$;
+        `);
+
         
     } catch (e:any) {
         console.error("❌ Failed to create leaderboard table:", e.message);

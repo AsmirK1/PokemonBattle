@@ -52,22 +52,22 @@ return (
     <div className="min-h-screen bg-[#CCCCCC]">
         <section className=" leaderboard mx-auto max-w-4xl px-4 py-10">
             {/* PANEL WITH TOP TAB TITLE */}
-            <div className="relative rounded-[24px] border-2 border-indigo-200 bg-blue-500 shadow-xl">
+            <div className="relative rounded-[24px] border-2 border-indigo-200 bg-gradient-to-r from-blue-500 to-purple-600 shadow-xl">
             {/* tab title chip */}
             <div className="absolute -top-5 left-1/2 -translate-x-1/2">
-                <div className="rounded-full border border-indigo-200 bg-blue-300 px-10 py-2 font-semibold tracking-wide text-indigo-700 shadow-md">
+                <div className="rounded-full border border-indigo-200 bg-gradient-to-r to-blue-400 from-cyan-300 text-[#333333] px-10 py-2 font-semibold tracking-wide text-indigo-700 shadow-md">
                 LEADERBOARD
                 </div>
             </div>
 
             <div className="px-5 pt-8 pb-5">
-                <p className="mb-4 text-center text-xs text-neutral-500">
+                <p className="mb-4 text-center text-xs text-[#333333]">
                 Top trainers by battle score
                 </p>
 
                 {!hasRows ? (
                 <div className="rounded-2xl border border-neutral-200 bg-white p-8 text-center">
-                    <p className="text-neutral-600">
+                    <p className="text-[#333333]">
                     No scores yet. Finish a battle to post your first score!
                     </p>
                 </div>
@@ -100,7 +100,7 @@ return (
 
                         {/* score pill on the right */}
                         <div className="col-span-2 flex justify-end">
-                        <span className="inline-flex items-center rounded-full bg-indigo-600 px-3 py-1 text-sm font-semibold text-white shadow">
+                        <span className="inline-flex items-center rounded-full bg-blue-400 px-3 py-1 text-sm font-semibold text-white shadow">
                             {row.score.toLocaleString()}
                         </span>
                         </div>

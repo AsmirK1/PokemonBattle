@@ -1,4 +1,4 @@
-import z from "zod";
+import {z} from "zod";
 import pool from "@/lib/db";
 
 export const LeaderboardInsert = z.object({
@@ -16,17 +16,25 @@ export type LeaderboardRow = {
 export async function addScore(input: unknown): Promise<LeaderboardRow> {
     // Validate {username, score}
     const data = LeaderboardInsert.parse(input);
+    const {username, score} = data;
 
     const result = await pool.query<LeaderboardRow>(
         `INSERT INTO leaderboard (username, score)
         VALUES ($1, $2)
+        ON CONFLICT (username)
+        DO UPDATE SET 
+            score = GREATEST(leaderboard.score, EXCLUDED.score),
+            created_at = CASE
+                WHEN EXCLUDED.score > leaderboard.score THEN NOW()
+                ELSE leaderboard.created_at
+            END
         RETURNING id, username, score, created_at`,
-        [data.username, data.score]
+        [username, score]
     );
     return result.rows[0];
 }
 
-export async function getTop(limit = 100): Promise<LeaderboardRow>[] {
+export async function getTop(limit = 100): Promise<LeaderboardRow[]> {
     const {rows} = await pool.query<LeaderboardRow>(
         `SELECT id, username, score, created_at
         FROM leaderboard

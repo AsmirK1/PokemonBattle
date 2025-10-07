@@ -31,8 +31,7 @@ export default function BattleArena({ enemyPokemon, popularPokemons }: BattleAre
   const [showSelectionPopup, setShowSelectionPopup] = useState(false);
   const [showResultScreen, setShowResultScreen] = useState(false);
 
-const auth = (useAuth as any)?.(); 
-const postedRef = useRef(false);
+const { user, isAuthenticated } = (useAuth as any)?.() || {};
 
   // simple scoring: win=100, draw=50, lose=0
 function computeScore(result: BattleState): number {
@@ -42,29 +41,48 @@ function computeScore(result: BattleState): number {
 }
 
 // If not logged in, prompt once and write to leaderboard
-async function handlePostBattlePrompt(result: BattleState) {
+const postedRef = useRef(false);
+
+function computeScore(result: BattleState) {
+  if (result === "player-win") return 100;
+  if (result === "draw") return 50;
+  return 0;
+}
+
+async function handleGuestPost(result: BattleState) {
+  if (isAuthenticated) return;       // logged-in users skip prompt
+  if (postedRef.current) return;
+  postedRef.current = true;
+
   try {
-    // if you don't use auth, remove the next 2 lines:
-    if (auth?.user?.id) return; // logged-in: server-side logging already covers it
-    if (postedRef.current) return;
-    postedRef.current = true;
-
     const username = (prompt("Enter your trainer name for the leaderboard:") || "").trim();
-    if (!username) {
-      postedRef.current = false; // allow retry next time
-      return;
-    }
+    if (!username) { postedRef.current = false; return; }
 
-    const score = computeScore(result);
-    await submitLeaderboardScore(username, score);
-    // optional: navigate user to see their score
+    await submitLeaderboardScore(username, computeScore(result));
     window.location.href = "/leaderboard";
   } catch (e) {
     console.error(e);
-    postedRef.current = false; // allow retry on failure
+    postedRef.current = false;
     alert("Could not add your score to the leaderboard. Please try again.");
   }
 }
+
+
+async function submitLoggedInResult(result: BattleState) {
+  if (!isAuthenticated || !user?.id) return;
+  const mapped = result === "player-win" ? "win" : "lose"; // map "draw" to "lose" for now
+  try {
+    await fetch("/api/battle/update-score", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userId: user.id, result: mapped }),
+    });
+    // optional: window.location.href = "/leaderboard";
+  } catch (e) {
+    console.error("Failed to update score", e);
+  }
+}
+
 
   
 
@@ -116,7 +134,7 @@ async function handlePostBattlePrompt(result: BattleState) {
         : "🤝 It's a draw!",
         type: 'win'
       }]);
-      await handlePostBattlePrompt(battleResult)
+      await (isAuthenticated ? submitLoggedInResult(battleResult) : handleGuestPost(battleResult));
       return;
     }
 
@@ -149,7 +167,8 @@ async function handlePostBattlePrompt(result: BattleState) {
           : "🤝 It's a draw!",
         type: 'win'
       }]);
-      await handlePostBattlePrompt(enemyBattleResult);
+      await (isAuthenticated ? submitLoggedInResult(enemyBattleResult) : handleGuestPost(enemyBattleResult));
+
       return;
     }
 
