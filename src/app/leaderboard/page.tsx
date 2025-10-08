@@ -47,55 +47,73 @@ export default async function LeaderboardPage() {
 
   const hasRows = rows.length > 0;
 
-  return (
-    <section className="space-y-6">
-      <header>
-        <h1 className="text-3xl font-semibold tracking-tight">Leaderboard</h1>
-        <p className="mt-1 text-sm text-gray-500">Top trainers by battle score</p>
-      </header>
-
-      {!hasRows ? (
-        <div className="rounded-2xl border bg-white p-8 text-center">
-          <p className="text-gray-600">
-            No scores yet. Finish a battle to post your first score!
-          </p>
-        </div>
-      ) : (
-        <div className="overflow-hidden rounded-2xl border bg-white">
-          <ul className="divide-y">
-            {rows.map((row) => (
-              <li
-                key={row.rank}
-                className="grid grid-cols-12 items-center gap-3 px-4 py-3 odd:bg-white even:bg-gray-50"
-              >
-                {/* Rank / medal */}
-                <div className="col-span-2 sm:col-span-1 flex items-center">
-                  <Medal rank={row.rank} />
+ 
+return (
+    <div className="min-h-screen bg-[#CCCCCC]">
+        <section className=" leaderboard mx-auto max-w-4xl px-4 py-10">
+            {/* PANEL WITH TOP TAB TITLE */}
+            <div className="relative rounded-[24px] border-2 border-indigo-200 bg-gradient-to-r from-blue-500 to-purple-600 shadow-xl">
+            {/* tab title chip */}
+            <div className="absolute -top-5 left-1/2 -translate-x-1/2">
+                <div className="rounded-full border border-indigo-200 bg-gradient-to-r to-blue-400 from-cyan-300 text-[#333333] px-10 py-2 font-semibold tracking-wide text-indigo-700 shadow-md">
+                LEADERBOARD
                 </div>
+            </div>
 
-                {/* Avatar + Username */}
-                <div className="col-span-6 sm:col-span-7 flex items-center gap-3">
-                  <div className="h-9 w-9 rounded-full bg-gray-200" aria-hidden />
-                  <div className="min-w-0">
-                    <div className="truncate font-medium text-gray-900">
-                      {row.username}
-                    </div>
-                    <div className="text-xs text-gray-500">{row.date}</div>
-                  </div>
+            <div className="px-5 pt-8 pb-5">
+                <p className="mb-4 text-center text-xs text-[#333333]">
+                Top trainers by battle score
+                </p>
+
+                {!hasRows ? (
+                <div className="rounded-2xl border border-neutral-200 bg-white p-8 text-center">
+                    <p className="text-[#333333]">
+                    No scores yet. Finish a battle to post your first score!
+                    </p>
                 </div>
+                ) : (
+                // LIST CARD BODY
+                <ul className="space-y-3">
+                    {rows.map((row) => (
+                    // ROW = rounded bar + light border, like the mock
+                    <li
+                        key={row.rank}
+                        className="grid grid-cols-12 items-center gap-3 rounded-xl border border-neutral-200 bg-indigo-100 px-4 py-3 hover:bg-neutral-100 transition-colors"
+                    >
+                        {/* rank/medal */}
+                        <div className="col-span-1 flex items-center">
+                        <Medal rank={row.rank} />
+                        </div>
 
+                        {/* avatar + name/date */}
+                        <div className="col-span-9 sm:col-span-9 md:col-span-9 lg:col-span-9 flex items-center gap-3">
+                        <div className="h-8 w-8 rounded-full bg-neutral-200" aria-hidden />
+                        <div className="min-w-0">
+                            <div className="truncate font-medium text-neutral-900">
+                            {row.username}
+                            </div>
+                            <div className="text-[11px] text-neutral-500 leading-tight">
+                            {row.date}
+                            </div>
+                        </div>
+                        </div>
 
-                {/* Score pill (right-aligned) */}
-                <div className="col-span-4 sm:col-span-4 flex justify-end">
-                  <span className="inline-flex items-center rounded-full bg-indigo-100 px-3 py-1 text-sm font-semibold text-indigo-700">
-                    {row.score.toLocaleString()}
-                  </span>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
-    </section>
-  );
+                        {/* score pill on the right */}
+                        <div className="col-span-2 flex justify-end">
+                        <span className="inline-flex items-center rounded-full bg-blue-400 px-3 py-1 text-sm font-semibold text-white shadow">
+                            {row.score.toLocaleString()}
+                        </span>
+                        </div>
+                    </li>
+                    ))}
+                </ul>
+                )}
+            </div>
+            </div>
+        </section>
+    </div>
+    );
 }
+
+
+

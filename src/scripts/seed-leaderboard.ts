@@ -16,9 +16,12 @@ async function main() {
       ["Red", 2980]
     );
     await pool.query(
-      `INSERT INTO leaderboard (username, score) VALUES ($1, $2)`,
-      ["Misty", 1756]
+      `INSERT INTO leaderboard (username, score)
+      VALUES ($1, $2)
+      ON CONFLICT (username) DO NOTHING`,
+      ["Red", 2980]
     );
+
     console.log("✅ Seeded two rows.");
   } catch (e: any) {
     console.error("❌ Seed failed:", e.message);
